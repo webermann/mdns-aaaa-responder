@@ -1,0 +1,31 @@
+[Unit]
+Description=mDNS AAAA responder (workaround for Fire OS mDNS query storm)
+Documentation=file:///opt/mdns-aaaa-responder/README.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/mdns-aaaa-responder
+ExecStart=/usr/bin/python3 /opt/mdns-aaaa-responder/mdns_aaaa_responder.py $MDNS_AAAA_ARGS
+Restart=always
+RestartSec=5
+
+# hardening: port 5353 is unprivileged, no root needed
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target
